@@ -11,9 +11,13 @@ l = np.load('labels.npy')
 
 labels = np.empty((numImages,10))
 for i in range(numImages):
+    
+
+classes = np.empty((10, numImages/10, 784))
+for i in range(numImages):
     v = np.zeros((10))
     v[l[i]] = 1
-    labels[i] = v
+    classes[i] = v
 
 classes = np.empty((0))
 
