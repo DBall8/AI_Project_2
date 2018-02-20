@@ -1,6 +1,5 @@
 import numpy as np
 from sklearn import tree
-import graphviz
 
 images = np.load('images.npy')
 d = np.shape(images)
@@ -10,24 +9,69 @@ images = np.reshape(images, (numImages, 784))
 l = np.load('labels.npy')
 
 labels = np.empty((numImages,10))
-for i in range(numImages):
-    
+#for i in range(numImages):
 
-classes = np.empty((10, numImages/10, 784))
-for i in range(numImages):
-    v = np.zeros((10))
-    v[l[i]] = 1
-    classes[i] = v
+numTrain = int(0.6*numImages)
+numValid = int(0.15*numImages)
+numTest = int(0.25*numImages)
 
-classes = np.empty((0))
+trainCount = 0;
+validCount = 0
+testCount = 0;
+
+classedImages = [[],[],[],[],[],[],[],[],[],[]]
+
+traindata = []
+validdata = []
+testdata = []
+
+trainlabels = []
+validlabels = []
+testlabels = []
+
+for i in range(numImages):
+    classedImages[l[i]].append(images[i])
+
+for c in range(10):
+    numThisClass = len(classedImages[c])
+    trainCount = 0;
+    validCount = 0
+    testCount = 0;
+    for i in range(numThisClass):
+        
+        if(trainCount < 0.6*numThisClass):
+            traindata.append(classedImages[c][i])
+            v = [0]*10
+            v[c] = 1
+            trainlabels.append(v)
+            trainCount += 1
+        elif(validCount < 0.15*numThisClass):
+            validdata.append(classedImages[c][i])
+            v = [0]*10
+            v[c] = 1
+            validlabels.append(v)
+            validCount += 1
+        else:
+            testdata.append(classedImages[c][i])
+            v = [0]*10
+            v[c] = 1
+            testlabels.append(v)
+            testCount += 1
+        
 
 dt = tree.DecisionTreeClassifier()
-dt = dt.fit(images, labels)
+dt = dt.fit(traindata, trainlabels)
 
-predictions = dt.predict(images)
+predictions = dt.predict(validdata)
 
-#data = tree.export_graphviz(dt, out_file=None)
+conf = np.zeros((10,10))
 
-#graph = graphviz.Source(data)
-#graph.render("dt")
+def getLabel(v):
+    for i in range(10):
+        if(v[i] == 1):
+            return i
 
+for i in range(numValid):
+    reallabel = getLabel(validlabels[i])
+    predictlabel = getLabel(predictions[i])
+    conf[reallabel, predictlabel] += 1
