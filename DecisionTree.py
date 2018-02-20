@@ -1,5 +1,6 @@
 import numpy as np
 from sklearn import tree
+import graphviz as gp
 
 images = np.load('images.npy')
 d = np.shape(images)
@@ -62,6 +63,10 @@ for c in range(10):
 dt = tree.DecisionTreeClassifier()
 dt = dt.fit(traindata, trainlabels)
 
+#dot_data = tree.export_graphviz(dt, out_file=None) 
+#graph = gp.Source(dot_data) 
+#graph.render("iris") 
+
 predictions = dt.predict(validdata)
 
 conf = np.zeros((10,10))
@@ -71,7 +76,20 @@ def getLabel(v):
         if(v[i] == 1):
             return i
 
+def getRecall(conf):
+    recalls = np.zeros((10))
+    for r in range(10):
+        TP = conf[r,r]
+        FN = 0
+        for i in range(10):
+            if i != r:
+                FN += conf[r,i]
+        recalls[r] = TP / (TP + FN)
+    return recalls
+
 for i in range(numValid):
     reallabel = getLabel(validlabels[i])
     predictlabel = getLabel(predictions[i])
     conf[reallabel, predictlabel] += 1
+
+print(getRecall(conf))
