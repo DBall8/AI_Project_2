@@ -2,6 +2,43 @@ import numpy as np
 from sklearn import tree
 import graphviz as gp
 
+
+def getLabel(v):
+    for i in range(10):
+        if(v[i] == 1):
+            return i
+
+def getPandR(conf):
+    recall = np.zeros((10))
+    precision = np.zeros((10))
+    for c in range(10):
+        TP = conf[c,c]
+        FN = 0
+        FP = 0
+        for i in range(10):
+            if i != c:
+                FN += conf[c,i]
+        for i in range(10):
+            if i != c:
+                FP += conf[i,c]
+        recall[c] = TP / (TP + FN)
+        precision[c] = TP / (TP + FP)
+    return precision, recall
+
+def compare(v1, v2):
+    v3 = np.zeros((10))
+    for i in range(10):
+        v3[i] = v1[i] - v2[i]
+    return v3
+
+def getConfMatrix(predictions, validlabels):
+    conf = np.zeros((10,10))
+    for i in range(len(validlabels)):
+        reallabel = getLabel(validlabels[i])
+        predictlabel = getLabel(predictions[i])
+        conf[reallabel, predictlabel] += 1
+    return conf
+
 images = np.load('images.npy')
 d = np.shape(images)
 numImages = d[0]
@@ -59,37 +96,54 @@ for c in range(10):
             testlabels.append(v)
             testCount += 1
         
+def makeTree(testdata, testlabels):
+    global traindata, trainlabels
+    dt = tree.DecisionTreeClassifier(max_depth=20)
+    dt = dt.fit(traindata, trainlabels)
+    predictions = dt.predict(testdata)
+    conf = getConfMatrix(predictions, testlabels)
+    return conf
 
-dt = tree.DecisionTreeClassifier()
-dt = dt.fit(traindata, trainlabels)
+def saveData(conf):
+    file = open('confusion_matrix.csv', "w")
+    for r in conf:
+        for i in r:
+            file.write(str(i) + ',')
+        file.write('\n')
+    file.close()
 
-#dot_data = tree.export_graphviz(dt, out_file=None) 
-#graph = gp.Source(dot_data) 
-#graph.render("iris") 
+    p, r = getPandR(conf)
 
-predictions = dt.predict(validdata)
+    file = open('precision.csv', "w")
+    for i in p:
+        file.write(str(i) + ',')
+    file.close()
 
-conf = np.zeros((10,10))
+    file = open('recall.csv', "w")
+    for i in r:
+        file.write(str(i) + ',')
+    file.close()
 
-def getLabel(v):
-    for i in range(10):
-        if(v[i] == 1):
-            return i
+#precision, recall = getPandR(conf)
 
-def getRecall(conf):
-    recalls = np.zeros((10))
-    for r in range(10):
-        TP = conf[r,r]
-        FN = 0
-        for i in range(10):
-            if i != r:
-                FN += conf[r,i]
-        recalls[r] = TP / (TP + FN)
-    return recalls
+##print('Precision')
+##print(precision)
+##print('Recall')
+##print(recall)
+##
+##print('Precision2')
+##print(precision)
+##print('Recall2')
+##print(recall)
+#print(conf)
 
-for i in range(numValid):
-    reallabel = getLabel(validlabels[i])
-    predictlabel = getLabel(predictions[i])
-    conf[reallabel, predictlabel] += 1
 
-print(getRecall(conf))
+##print("Difference")
+##print('Precision')
+##print(compare(precision, precision2))
+##print('Recall')
+##print(compare(recall, recall2))
+
+
+
+
