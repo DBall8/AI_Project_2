@@ -38,7 +38,6 @@ def processIMG(imagePath, labelsPath):
 
     one_hot_labels = data[:,0:10]
     flattend_images = data[:,10:]
-    printIMG(flattend_images[1])
 
     data_size = 6500
     training_size = int(data_size * 0.60)
@@ -46,7 +45,7 @@ def processIMG(imagePath, labelsPath):
     val_size = int(data_size * (0.65 + 0.15))
     print ("Validation set index = ", val_size)
 
-    num_classes = np.unique(labels).shape[0] #which is 10
+    num_classes = np.unique(labels).shape[0]
     x_train, x_val, x_test = flattend_images[:training_size], flattend_images[training_size:val_size], flattend_images[val_size:]
     y_train, y_val, y_test = one_hot_labels[:training_size], one_hot_labels[training_size: val_size], one_hot_labels[val_size:]
     return x_train, y_train, x_val, y_val, x_test, y_test
@@ -70,11 +69,9 @@ printIMG(x_train[a[0][1]])
 printIMG(x_train[a[0][2]])
 
 print("n=3")
-print("---------------------")
-print("metrics 1")
+print("Classification")
 print(metrics.classification_report(expected, predicted))
-print("---------------------")
-print ("metric 2")
+print ("Confusion Matrix")
 y_act = list(map(np.argmax, expected))
 y_pred = list(map(np.argmax, predicted))
 print(confusion_matrix(y_act,y_pred, [0,1,2,3,4,5,6,7,8,9]))
