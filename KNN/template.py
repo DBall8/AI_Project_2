@@ -41,27 +41,26 @@ def processIMG(imagePath, labelsPath):
     value = int(data_length * (0.65 + 0.15))
 
     num_classes = np.unique(labels).shape[0]
-    x_train, x_val, x_test = end_images[:train], end_images[train:value], end_images[value:]
-    y_train, y_val, y_test = classify_label[:train], classify_label[train: value], classify_label[value:]
-    return x_train, y_train, x_val, y_val, x_test, y_test
+    x_training, x, x_testing = end_images[:train], end_images[train:value], end_images[value:]
+    y_training, y, y_testing = classify_label[:train], classify_label[train: value], classify_label[value:]
+    return x_training, y_training, x, y, x_testing, y_testing
 
 
 # Model Template
 
-x_train, y_train, x_val, y_val, x_test, y_test = processIMG("images.npy","labels.npy")
+x_training, y_training, x, y, x_testing, y_testing = processIMG("images.npy","labels.npy")
 
-knn = KNeighborsClassifier(n_neighbors=3)
-knn.fit(x_train, y_train)
-expected = y_test
-predicted = knn.predict(x_test)
+knn = KNeighborsClassifier(n_neighbors = 3)
+knn.fit(x_training, y_training)
+expected = y_testing
+predicted = knn.predict(x_testing)
+a = knn.kneighbors(n_neighbors = 3, return_distance=False)
 
-a = knn.kneighbors(n_neighbors=3, return_distance=False)
-#printIMG(x_train[a[0][0]])
-#printIMG(x_train[a[0][1]])
-#printIMG(x_train[a[0][2]])
-#printIMG(x_train[a[0][3]])
+#printIMG(x_training[a[0][0]])
+#printIMG(x_training[a[0][1]])
+#printIMG(x_training[a[0][2]])
 
-print("k=3")
+print("n_neighbors = 3")
 print("Classification Report")
 print(metrics.classification_report(expected, predicted))
 print ("Confusion Matrix")
