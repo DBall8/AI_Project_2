@@ -349,13 +349,13 @@ print("Set Shapes End")
 
 # Model Template
 model = Sequential()  # declare model
-model.add(Dense(100, input_shape=(28*28, ), kernel_initializer='he_normal'))  # first layer
+model.add(Dense(10, input_shape=(28*28, ), kernel_initializer='he_normal'))  # first layer
 model.add(Activation('relu'))  # Non linear Activation
 
-model.add(Dense(50, input_shape=(100, ), kernel_initializer='he_normal'))  # first layer
+model.add(Dense(50, input_shape=(10, ), kernel_initializer='he_normal'))  # first layer
 model.add(Activation('relu'))  # Non linear Activation
 
-model.add(Dense(20, input_shape=(50, ), kernel_initializer='he_normal'))
+model.add(Dense(20, input_shape=(10, ), kernel_initializer='he_normal'))
 model.add(Activation('relu'))  # Non linear Activation
 
 # We have the model, the function that evaluates the model and we need kind of information we want it to know.
@@ -373,7 +373,7 @@ model.add(Activation('relu'))  # Non linear Activation
 
 
 
-model.add(Dense(10, input_shape=(50, ), kernel_initializer='he_normal'))
+model.add(Dense(10, input_shape=(10, ), kernel_initializer='he_normal'))
 model.add(Activation('softmax'))
 
 
@@ -384,7 +384,7 @@ model.compile(optimizer='sgd',
 
 
 # Train Model
-history = model.fit(trainingImag, trainingLabl, validation_data=(validationImag, validationLabl), epochs=5000, batch_size=512)
+history = model.fit(trainingImag, trainingLabl, validation_data=(validationImag, validationLabl), epochs=100, batch_size=512)
 
 # epocs: how many times the training is cycled. can be changed.
 # batch size:
