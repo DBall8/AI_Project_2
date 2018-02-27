@@ -56,9 +56,9 @@ expected = y_testing
 predicted = knn.predict(x_testing)
 a = knn.kneighbors(n_neighbors = 3, return_distance=False)
 
-#printIMG(x_training[a[0][0]])
-#printIMG(x_training[a[0][1]])
-#printIMG(x_training[a[0][2]])
+printIMG(x_training[a[0][0]])
+printIMG(x_training[a[0][1]])
+printIMG(x_training[a[0][2]])
 
 print("n_neighbors = 3")
 print("Classification Report")
